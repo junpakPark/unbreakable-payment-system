@@ -37,13 +37,11 @@ jobs:
           ln -sf "$JAR_FILE" /app/app.jar
 
           # Write environment file
-          cat > /app/env <<EOF
-SPRING_PROFILES_ACTIVE=prod
-SPRING_DATASOURCE_URL=jdbc:postgresql://${{ secrets.DB_HOST }}:5432/${{ secrets.DB_NAME }}
-SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USER }}
-SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}
-LOKI_URL=${{ secrets.LOKI_URL }}
-EOF
+          echo "SPRING_PROFILES_ACTIVE=prod" > /app/env
+          echo "SPRING_DATASOURCE_URL=jdbc:postgresql://${{ secrets.DB_HOST }}:5432/${{ secrets.DB_NAME }}" >> /app/env
+          echo "SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USER }}" >> /app/env
+          echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}" >> /app/env
+          echo "LOKI_URL=${{ secrets.LOKI_URL }}" >> /app/env
 
           # Restart service
           sudo systemctl restart unbreakable-payment-system
