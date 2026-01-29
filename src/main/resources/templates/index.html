@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>홈 - Payment System</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="text-center py-12">
+        <h1 class="text-3xl font-bold text-gray-900 mb-4">
+            Payment System
+        </h1>
+        <p class="text-gray-600 mb-8">
+            결제 시스템 데모
+        </p>
+
+        <!-- Fake 상품 목록 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <!-- 상품 1 -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold mb-2">베이직 플랜</h3>
+                <p class="text-gray-600 mb-4">기본 기능 제공</p>
+                <p class="text-2xl font-bold text-gray-900 mb-4">₩9,900</p>
+                <button class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
+                        hx-post="/orders"
+                        hx-vals='{"name": "베이직 플랜", "amount": 9900, "sellerId": 1}'
+                        hx-swap="none">
+                    구매하기
+                </button>
+            </div>
+
+            <!-- 상품 2 -->
+            <div class="bg-white rounded-lg shadow p-6 border-2 border-blue-500">
+                <div class="text-blue-600 text-sm font-semibold mb-2">인기</div>
+                <h3 class="text-lg font-semibold mb-2">프리미엄 플랜</h3>
+                <p class="text-gray-600 mb-4">모든 기능 + 우선 지원</p>
+                <p class="text-2xl font-bold text-gray-900 mb-4">₩29,900</p>
+                <button class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
+                        hx-post="/orders"
+                        hx-vals='{"name": "프리미엄 플랜", "amount": 29900, "sellerId": 1}'
+                        hx-swap="none">
+                    구매하기
+                </button>
+            </div>
+
+            <!-- 상품 3 -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold mb-2">엔터프라이즈</h3>
+                <p class="text-gray-600 mb-4">무제한 + 전담 매니저</p>
+                <p class="text-2xl font-bold text-gray-900 mb-4">₩99,900</p>
+                <button class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
+                        hx-post="/orders"
+                        hx-vals='{"name": "엔터프라이즈", "amount": 99900, "sellerId": 1}'
+                        hx-swap="none">
+                    구매하기
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
