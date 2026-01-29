@@ -28,29 +28,22 @@ jobs:
 
       - name: Deploy
         run: |
-          # Stop existing process
-          if [ -f /app/app.pid ]; then
-            kill $(cat /app/app.pid) 2>/dev/null || true
-            rm /app/app.pid
-          fi
-
-          # Copy JAR to /app
+          # Copy JAR and create symlink
           cp build/libs/*.jar /app/
+          JAR_FILE=$(ls -t /app/unbreakable-payment-system-*.jar | grep -v plain | head -1)
+          ln -sf "$JAR_FILE" /app/app.jar
 
-          # Find the latest JAR
-          cd /app
-          JAR_FILE=$(ls -t *.jar | head -1)
+          # Write environment file
+          cat > /app/env <<EOF
+SPRING_PROFILES_ACTIVE=prod
+SPRING_DATASOURCE_URL=jdbc:postgresql://${{ secrets.DB_HOST }}:5432/${{ secrets.DB_NAME }}
+SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USER }}
+SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}
+LOKI_URL=${{ secrets.LOKI_URL }}
+EOF
 
-          # Start application
-          export LOKI_URL="${{ secrets.LOKI_URL }}"
-          nohup java -jar "$JAR_FILE" \
-            "--spring.profiles.active=prod" \
-            "--spring.datasource.url=jdbc:postgresql://${{ secrets.DB_HOST }}:5432/${{ secrets.DB_NAME }}" \
-            "--spring.datasource.username=${{ secrets.DB_USER }}" \
-            "--spring.datasource.password=${{ secrets.DB_PASSWORD }}" \
-            > app.log 2>&1 &
-
-          echo $! > app.pid
+          # Restart service
+          sudo systemctl restart unbreakable-payment-system
 
           # Wait and verify (retry up to 60s)
           for i in {1..12}; do
