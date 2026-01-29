@@ -1,0 +1,56 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Run tests
+        run: ./gradlew test
+
+      - name: Build JAR
+        run: ./gradlew bootJar
+
+      - name: Deploy
+        run: |
+          # Stop existing process
+          if [ -f /app/app.pid ]; then
+            kill $(cat /app/app.pid) 2>/dev/null || true
+            rm /app/app.pid
+          fi
+
+          # Copy JAR to /app
+          cp build/libs/*.jar /app/
+
+          # Find the latest JAR
+          cd /app
+          JAR_FILE=$(ls -t *.jar | head -1)
+
+          # Start application
+          nohup java -jar "$JAR_FILE" \
+            --spring.profiles.active=prod \
+            --spring.datasource.url=jdbc:postgresql://${{ secrets.DB_HOST }}:5432/${{ secrets.DB_NAME }} \
+            --spring.datasource.username=${{ secrets.DB_USER }} \
+            --spring.datasource.password=${{ secrets.DB_PASSWORD }} \
+            > app.log 2>&1 &
+
+          echo $! > app.pid
+
+          # Wait and verify
+          sleep 10
+          curl -sf http://localhost:8080/actuator/health || exit 1
