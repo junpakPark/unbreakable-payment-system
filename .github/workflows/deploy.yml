@@ -28,6 +28,9 @@ jobs:
 
       - name: Deploy
         run: |
+          # Stop existing service
+          sudo systemctl stop unbreakable-payment-system || true
+
           # Copy JAR and create symlink
           cp build/libs/*.jar /app/
           JAR_FILE=$(ls -t /app/unbreakable-payment-system-*.jar | grep -v plain | head -1)
