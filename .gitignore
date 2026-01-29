@@ -1,0 +1,41 @@
+# Project docs (private)
+CLAUDE.md
+payment-system-project-plan-v13.md
+docs/
+
+# Gradle
+.gradle/
+build/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+*.swo
+
+# Kotlin
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+*.war
+*.ear
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Local config
+application-local.yml
+.env
+.env.local
+
+# Test
+/out/
+/test-output/
