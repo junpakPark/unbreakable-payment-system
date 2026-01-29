@@ -52,6 +52,14 @@ jobs:
 
           echo $! > app.pid
 
-          # Wait and verify
-          sleep 10
-          curl -sf http://localhost:8080/actuator/health || exit 1
+          # Wait and verify (retry up to 60s)
+          for i in {1..12}; do
+            if curl -sf http://localhost:8080/actuator/health > /dev/null; then
+              echo "Health check passed"
+              exit 0
+            fi
+            echo "Waiting for app to start... ($i/12)"
+            sleep 5
+          done
+          echo "Health check failed after 60s"
+          exit 1
